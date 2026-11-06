@@ -1,6 +1,7 @@
 {
   "name": "@excalidraw/excalidraw",
   "version": "0.18.1",
+  "private": true,
   "type": "module",
   "types": "./dist/types/excalidraw/index.d.ts",
   "main": "./dist/prod/index.js",

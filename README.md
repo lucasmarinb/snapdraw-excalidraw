@@ -1,3 +1,11 @@
+> [!NOTE]
+> **snapdraw-excalidraw** is a fork of [Excalidraw](https://github.com/excalidraw/excalidraw)
+> maintained for snapdraw, a screenshot
+> annotation app. Its changes live on the `snapdraw` branch, based on upstream
+> release v0.18.1. The package keeps the name `@excalidraw/excalidraw` but is
+> marked private and is never published; snapdraw builds and packs it locally.
+> Excalidraw is MIT licensed; see [LICENSE](LICENSE).
+
 <a href="https://excalidraw.com/" target="_blank" rel="noopener">
   <picture>
     <source media="(prefers-color-scheme: dark)" alt="Excalidraw" srcset="https://excalidraw.nyc3.cdn.digitaloceanspaces.com/github/excalidraw_github_cover_2_dark.png" />
