@@ -336,6 +336,30 @@ export const ShapesSwitcher = ({
           />
         );
       })}
+      {app.props.customTools?.map((tool) => {
+        const letter = tool.key?.toUpperCase();
+        return (
+          <ToolButton
+            className="Shape"
+            key={`custom-${tool.type}`}
+            type="radio"
+            icon={tool.icon}
+            checked={
+              activeTool.type === "custom" &&
+              activeTool.customType === tool.type
+            }
+            name="editor-current-shape"
+            title={letter ? `${tool.label} — ${letter}` : tool.label}
+            keyBindingLabel={letter}
+            aria-label={tool.label}
+            aria-keyshortcuts={letter}
+            data-testid={`toolbar-custom-${tool.type}`}
+            onChange={() =>
+              app.setActiveTool({ type: "custom", customType: tool.type })
+            }
+          />
+        );
+      })}
       <div className="App-toolbar__divider" />
 
       <DropdownMenu open={isExtraToolsMenuOpen}>

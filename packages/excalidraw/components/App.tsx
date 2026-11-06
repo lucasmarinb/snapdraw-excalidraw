@@ -242,6 +242,7 @@ import type {
   AppClassProperties,
   AppProps,
   AppState,
+  CustomTool,
   BinaryFileData,
   DataURL,
   ExcalidrawImperativeAPI,
@@ -4445,8 +4446,14 @@ class App extends React.Component<AppProps, AppState> {
         !this.state.selectionElement &&
         !this.state.selectedElementsAreBeingDragged
       ) {
-        const shape = findShapeByKey(event.key);
-        if (shape) {
+        const customTool = this.props.customTools?.find(
+          (tool) => tool.key?.toLowerCase() === event.key.toLowerCase(),
+        );
+        const shape = customTool ? null : findShapeByKey(event.key);
+        if (customTool) {
+          this.setActiveTool({ type: "custom", customType: customTool.type });
+          event.stopPropagation();
+        } else if (shape) {
           if (this.state.activeTool.type !== shape) {
             trackEvent(
               "toolbar",
@@ -4663,6 +4670,16 @@ class App extends React.Component<AppProps, AppState> {
     }
   });
 
+  /** The `customTools` entry for a custom active tool, if any. */
+  getActiveCustomTool = (
+    activeTool: AppState["activeTool"] = this.state.activeTool,
+  ): CustomTool | undefined =>
+    activeTool.type === "custom"
+      ? this.props.customTools?.find(
+          (tool) => tool.type === activeTool.customType,
+        )
+      : undefined;
+
   // We purposely widen the `tool` type so this helper can be called with
   // any tool without having to type check it
   private isToolSupported = <T extends ToolType | "custom">(tool: T) => {
@@ -4695,6 +4712,8 @@ class App extends React.Component<AppProps, AppState> {
     const nextActiveTool = updateActiveTool(this.state, tool);
     if (nextActiveTool.type === "hand") {
       setCursor(this.interactiveCanvas, CURSOR_TYPE.GRAB);
+    } else if (this.getActiveCustomTool(nextActiveTool)?.draws) {
+      setCursor(this.interactiveCanvas, CURSOR_TYPE.CROSSHAIR);
     } else if (!isHoldingSpace) {
       setCursorForShape(this.interactiveCanvas, {
         ...this.state,
@@ -6590,7 +6609,16 @@ class App extends React.Component<AppProps, AppState> {
         pointerDownState,
       );
     } else if (this.state.activeTool.type === "custom") {
-      setCursorForShape(this.interactiveCanvas, this.state);
+      const customTool = this.getActiveCustomTool();
+      if (customTool?.draws) {
+        this.createGenericElementOnPointerDown(
+          customTool.draws,
+          pointerDownState,
+          customTool.elementProps,
+        );
+      } else {
+        setCursorForShape(this.interactiveCanvas, this.state);
+      }
     } else if (
       this.state.activeTool.type === TOOL_TYPE.frame ||
       this.state.activeTool.type === TOOL_TYPE.magicframe
@@ -7805,6 +7833,7 @@ class App extends React.Component<AppProps, AppState> {
   private createGenericElementOnPointerDown = (
     elementType: ExcalidrawGenericElement["type"] | "embeddable",
     pointerDownState: PointerDownState,
+    elementProps: CustomTool["elementProps"] = {},
   ): void => {
     const [gridX, gridY] = getGridPoint(
       pointerDownState.origin.x,
@@ -7832,6 +7861,7 @@ class App extends React.Component<AppProps, AppState> {
       roundness: this.getCurrentItemRoundness(elementType),
       locked: false,
       frameId: topLayerFrame ? topLayerFrame.id : null,
+      ...elementProps,
     } as const;
 
     let element;

@@ -23,6 +23,7 @@ import type {
   ExcalidrawIframeLikeElement,
   OrderedExcalidrawElement,
   ExcalidrawNonSelectionElement,
+  ExcalidrawGenericElement,
 } from "./element/types";
 import type { Action } from "./actions/types";
 import type { LinearElementEditor } from "./element/linearElementEditor";
@@ -147,6 +148,38 @@ export type ActiveTool =
       type: "custom";
       customType: string;
     };
+
+/**
+ * A host-defined tool shown in the toolbar after the built-in shapes. While
+ * it's active, `activeTool` is `{ type: "custom", customType: tool.type }`.
+ */
+export type CustomTool = {
+  type: string;
+  label: string;
+  icon: React.ReactNode;
+  /** A single key that picks the tool; shown on its button. */
+  key?: string;
+  /**
+   * The shape the tool draws, the way the built-in tool of that type does.
+   * Without it, the host handles the pointer itself (`onPointerDown`).
+   */
+  draws?: "rectangle" | "diamond" | "ellipse";
+  /** Merged over the current item style of every element the tool draws. */
+  elementProps?: Partial<
+    Pick<
+      ExcalidrawGenericElement,
+      | "strokeColor"
+      | "backgroundColor"
+      | "fillStyle"
+      | "strokeWidth"
+      | "strokeStyle"
+      | "roughness"
+      | "opacity"
+      | "roundness"
+      | "customData"
+    >
+  >;
+};
 
 export type SidebarName = string;
 export type SidebarTabName = string;
@@ -530,6 +563,8 @@ export interface ExcalidrawProps {
     /** excludes the duplicated elements */
     prevElements: readonly ExcalidrawElement[],
   ) => ExcalidrawElement[] | void;
+  /** Extra tools in the toolbar; see `CustomTool`. */
+  customTools?: readonly CustomTool[];
   renderTopRightUI?: (
     isMobile: boolean,
     appState: UIAppState,
