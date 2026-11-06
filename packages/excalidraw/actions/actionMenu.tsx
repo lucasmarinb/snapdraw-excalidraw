@@ -39,11 +39,12 @@ export const actionToggleEditMenu = register({
     },
     captureUpdate: CaptureUpdateAction.EVENTUALLY,
   }),
-  PanelComponent: ({ elements, appState, updateData }) => (
+  PanelComponent: ({ elements, appState, updateData, appProps }) => (
     <ToolButton
       visible={showSelectedShapeActions(
         appState,
         getNonDeletedElements(elements),
+        appProps.customTools,
       )}
       type="button"
       icon={palette}

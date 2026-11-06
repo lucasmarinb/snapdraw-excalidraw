@@ -4712,8 +4712,6 @@ class App extends React.Component<AppProps, AppState> {
     const nextActiveTool = updateActiveTool(this.state, tool);
     if (nextActiveTool.type === "hand") {
       setCursor(this.interactiveCanvas, CURSOR_TYPE.GRAB);
-    } else if (this.getActiveCustomTool(nextActiveTool)?.draws) {
-      setCursor(this.interactiveCanvas, CURSOR_TYPE.CROSSHAIR);
     } else if (!isHoldingSpace) {
       setCursorForShape(this.interactiveCanvas, {
         ...this.state,
@@ -9671,7 +9669,11 @@ class App extends React.Component<AppProps, AppState> {
         return;
       }
 
-      if (!activeTool.locked && activeTool.type !== "freedraw") {
+      if (
+        !activeTool.locked &&
+        activeTool.type !== "freedraw" &&
+        !this.getActiveCustomTool(activeTool)?.keepsActive
+      ) {
         resetCursor(this.interactiveCanvas);
         this.setState({
           newElement: null,

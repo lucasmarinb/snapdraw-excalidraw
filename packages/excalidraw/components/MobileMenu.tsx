@@ -176,7 +176,11 @@ export const MobileMenu = ({
           {appState.openMenu === "shape" &&
           !appState.viewModeEnabled &&
           appState.openDialog?.name !== "elementLinkSelector" &&
-          showSelectedShapeActions(appState, elements) ? (
+          showSelectedShapeActions(
+            appState,
+            elements,
+            app.props.customTools,
+          ) ? (
             <Section className="App-mobile-menu" heading="selectedShapeActions">
               <SelectedShapeActions
                 appState={appState}

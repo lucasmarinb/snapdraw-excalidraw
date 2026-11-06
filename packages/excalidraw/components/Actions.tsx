@@ -30,6 +30,7 @@ import {
   isLinearElement,
   isTextElement,
 } from "../element/typeChecks";
+import { getStyleActiveTool } from "../element/showSelectedShapeActions";
 import clsx from "clsx";
 import { actionToggleZenMode } from "../actions";
 import { Tooltip } from "./Tooltip";
@@ -88,7 +89,7 @@ export const canChangeBackgroundColor = (
 };
 
 export const SelectedShapeActions = ({
-  appState,
+  appState: uiAppState,
   elementsMap,
   renderAction,
   app,
@@ -98,6 +99,14 @@ export const SelectedShapeActions = ({
   renderAction: ActionManager["renderAction"];
   app: AppClassProperties;
 }) => {
+  // a custom tool with `styleAs` gets that tool's controls
+  const appState: UIAppState = {
+    ...uiAppState,
+    activeTool: getStyleActiveTool(
+      uiAppState.activeTool,
+      app.props.customTools,
+    ),
+  };
   const targetElements = getTargetElements(elementsMap, appState);
 
   let isSingleElementBoundContainer = false;

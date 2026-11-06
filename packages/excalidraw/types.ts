@@ -164,6 +164,16 @@ export type CustomTool = {
    * Without it, the host handles the pointer itself (`onPointerDown`).
    */
   draws?: "rectangle" | "diamond" | "ellipse";
+  /**
+   * Stay active after each use instead of going back to the selection tool,
+   * whether or not the tool lock is on (like the free-draw tool).
+   */
+  keepsActive?: boolean;
+  /**
+   * Show the style panel while the tool is active, with the controls of this
+   * built-in tool (by default the panel is hidden for custom tools).
+   */
+  styleAs?: ToolType;
   /** Merged over the current item style of every element the tool draws. */
   elementProps?: Partial<
     Pick<

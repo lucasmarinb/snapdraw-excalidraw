@@ -90,16 +90,14 @@ export const setCursorForShape = (
     setEraserCursor(interactiveCanvas, appState.theme);
     // do nothing if image tool is selected which suggests there's
     // a image-preview set as the cursor
-    // Ignore custom type as well and let host decide
   } else if (appState.activeTool.type === "laser") {
     const url =
       appState.theme === THEME.LIGHT
         ? laserPointerCursorDataURL_lightMode
         : laserPointerCursorDataURL_darkMode;
     interactiveCanvas.style.cursor = `url(${url}), auto`;
-  } else if (!["image", "custom"].includes(appState.activeTool.type)) {
-    interactiveCanvas.style.cursor = CURSOR_TYPE.CROSSHAIR;
   } else if (appState.activeTool.type !== "image") {
-    interactiveCanvas.style.cursor = CURSOR_TYPE.AUTO;
+    // host-defined (custom) tools act on the canvas like shapes do
+    interactiveCanvas.style.cursor = CURSOR_TYPE.CROSSHAIR;
   }
 };

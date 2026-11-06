@@ -224,6 +224,7 @@ const LayerUI = ({
     const shouldRenderSelectedShapeActions = showSelectedShapeActions(
       appState,
       elements,
+      app.props.customTools,
     );
 
     const shouldShowStats =
